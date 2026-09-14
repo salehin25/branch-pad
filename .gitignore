@@ -12,6 +12,12 @@ Portable/
 *.log
 npm-debug.log*
 
+# Diagnostic scratch files (temporary probes)
+diag-*.txt
+diagnostic*.txt
+electron-status.txt
+*/diag-*.txt
+
 # OS / editor
 .DS_Store
 Thumbs.db

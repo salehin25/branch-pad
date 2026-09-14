@@ -1,3 +1,0 @@
-path.txt:electron.exe
-dist files:19
-bin path:D:\Work\research\BranchPad\node_modules\electron\dist\electron.exe

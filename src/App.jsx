@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Sidebar from './components/layout/Sidebar';
 import ReposView from './components/repos/ReposView';
 import RepoPage from './components/repo/RepoPage';
@@ -19,18 +19,19 @@ const VIEW_TITLES = {
 export default function App() {
   const { repos, loadRepos, removeRepo } = useRepoStore();
   const [view, setView] = useState({ key: 'add' });
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     loadRepos();
   }, []);
 
-  // If no repo is selected and repos exist, open the first one.
+  // Auto-select the first repo ONLY on initial load.
+  // Never hijack the user's current view after that.
   useEffect(() => {
-    if (!view.key.startsWith('repo-') && repos.length > 0 && view.key === 'add') {
+    if (initializedRef.current) return;
+    if (repos.length > 0) {
+      initializedRef.current = true;
       setView({ key: `repo-${repos[0].id}` });
-    }
-    if (repos.length === 0 && view.key === 'add') {
-      setView({ key: 'add' });
     }
   }, [repos]);
 

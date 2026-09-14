@@ -1,0 +1,60 @@
+63	  const s = String(value ?? '');
+64	  if (/[&|<>^`"']/.test(s)) throw new Error(`Unsafe argument: ${s}`);
+65	  return s;
+66	}
+67	
+68	function runGh(args) {
+69	  const cmd = ['gh', ...args].join(' ');
+70	  return execSync(cmd, { encoding: 'utf-8', timeout: 30000 }).trim();
+71	}
+72	
+73	function enrichPr(pr) {
+74	  if (!pr) return null;
+75	  const reviewers = {};
+76	  const reviews = Array.isArray(pr.reviews) ? pr.reviews : [];
+77	  for (const r of reviews) {
+78	    if (r.user && r.user.login) reviewers[r.user.login] = r.state || '';
+79	  }
+80	  const approvalsCount = Object.values(reviewers).filter((s) => s === 'APPROVED').length;
+81	  const comments = Array.isArray(pr.comments) ? pr.comments : [];
+82	  const pendingCommentsCount =
+83	    comments.length + reviews.filter((r) => r.state === 'CHANGES_REQUESTED').length;
+84	
+85	  return {
+86	    github_id: pr.id ?? null,
+87	    number: pr.number,
+88	    title: pr.title || '',
+89	    state: pr.state || 'open',
+90	    is_draft: !!pr.isDraft,
+91	    review_decision: pr.reviewDecision || null,
+92	    approvals_count: approvalsCount,
+93	    pending_comments_count: pendingCommentsCount,
+94	    html_url: pr.url || '',
+95	    merged_at: pr.mergedAt || null,
+96	  };
+97	}
+98	
+99	// ── GitHub CLI IPC handlers ───────────────────────────────────────────
+100	ipcMain.handle('gh:prList', (_event, opts) => {
+101	  const repo = safeArg(opts?.repo);
+102	  const branch = safeArg(opts?.branch);
+103	  try {
+104	    const cmd = `gh pr list --repo ${repo} --head "${branch}" --state all --json number,url`;
+105	    const output = execSync(cmd, { encoding: 'utf-8', timeout: 20000 });
+106	    return JSON.parse(output || '[]');
+107	  } catch (err) {
+108	    console.error('gh pr list failed:', err.message);
+109	    return [];
+110	  }
+111	});
+112	
+113	ipcMain.handle('gh:prView', (_event, opts) => {
+114	  const repo = safeArg(opts?.repo);
+115	  const prNumber = safeArg(opts?.prNumber);
+116	  try {
+117	    const args = [
+118	      'pr', 'view', String(prNumber),
+119	      '--repo', repo,
+120	      '--json', 'id,number,title,state,isDraft,reviewDecision,url,mergedAt,comments,reviews',
+121	    ];
+122	    const output = runGh(args);

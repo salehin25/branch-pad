@@ -190,17 +190,20 @@ ipcMain.handle('gh:prCommentReply', (_event, opts) => {
   const repo = safeArg(opts?.repo);
   const prNumber = safeArg(opts?.prNumber);
   const body = String(opts?.body || '');
-  const inReplyToId = opts?.inReplyToId || null;
+  const inReplyToId = Number(opts?.inReplyToId) || null;
   try {
     if (inReplyToId) {
-      // Reply to a review comment thread
-      // Values are double-quoted so spaces in the body survive execSync's
-      // join — safeArg() already rejected any double-quote characters.
+      // Reply to a review comment thread.
+      // body stays a `-f` string (double-quoted so spaces survive execSync's
+      // join — safeArg() already rejected double-quote characters).
+      // in_reply_to MUST use uppercase `-F`: `-f` would send the id as a
+      // string, but GitHub's API schema requires it to be a JSON number
+      // (HTTP 422 "is not a number" otherwise).
       const result = runGh([
         'api', `repos/${repo}/pulls/${prNumber}/comments`,
         '--method', 'POST',
         '-f', `body="${body}"`,
-        '-f', `in_reply_to=${inReplyToId}`,
+        '-F', `in_reply_to=${inReplyToId}`,
       ]);
       return { ok: true, comment: JSON.parse(result || '{}') };
     } else {

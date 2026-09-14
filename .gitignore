@@ -24,3 +24,7 @@ Thumbs.db
 .idea/
 .vscode/
 *.local
+
+# Node scratch scripts (CJS probes)
+*.cjs
+# Session scratch dumps

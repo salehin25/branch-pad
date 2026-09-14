@@ -1,0 +1,7 @@
+{
+ "len": 3346,
+ "lines": 154,
+ "last": " line-height: 1.6;\n  color: #111;\n  background: #fefef8;\n  resize: vertical;\n  outline: none;\n}\n\n.note-editor textarea:focus {\n  border-color: #3b82f6;\n  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);\n}\n",
+ "line147": "  outline: none;",
+ "line148": "}"
+}

@@ -1,0 +1,2 @@
+nsis cached: yes
+nsis-resources cached: yes

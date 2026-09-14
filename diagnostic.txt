@@ -1,0 +1,3 @@
+electron dir: checksums.json,cli.js,electron.d.ts,index.js,install.js,LICENSE,package.json,README.md
+path.txt MISSING
+dist MISSING

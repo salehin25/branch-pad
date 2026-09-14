@@ -1,0 +1,12 @@
+{
+ "target": [
+  {
+   "target": "portable",
+   "arch": [
+    "x64"
+   ]
+  }
+ ],
+ "artifactName": "BranchPad-Portable-${version}.exe",
+ "signAndEditExecutable": false
+}

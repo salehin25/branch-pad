@@ -1,0 +1,14 @@
+ 141:   font-family: Consolas, 'Courier New', monospace;
+ 142:   font-size: 15px;
+ 143:   line-height: 1.6;
+ 144:   color: #111;
+ 145:   background: #fefef8;
+ 146:   resize: vertical;
+ 147:   outline: none;
+ 148: }
+ 149: 
+ 150: .note-editor textarea:focus {
+ 151:   border-color: #3b82f6;
+ 152:   box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+ 153: }
+ 154: 
